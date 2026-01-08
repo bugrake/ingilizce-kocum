@@ -5,6 +5,23 @@ import difflib
 import time
 import google.generativeai as genai
 
+# --- SAYFA AYARLARI ---
+st.set_page_config(page_title="İngilizce Koçu", layout="centered")
+
+# --- BURAYA EKLE: HAFIZA (SESSION STATE) BAŞLATMA ---
+if 'skor' not in st.session_state: 
+    st.session_state.skor = 0
+if 'soru' not in st.session_state: 
+    st.session_state.soru = None
+if 'kelime_sorusu' not in st.session_state: 
+    st.session_state.kelime_sorusu = None
+if 'cevap_verildi' not in st.session_state: 
+    st.session_state.cevap_verildi = False
+if 'kelime_cevap_verildi' not in st.session_state: 
+    st.session_state.kelime_cevap_verildi = False
+if 'ipucu_sayisi' not in st.session_state: 
+    st.session_state.ipucu_sayisi = 0
+    
 # ==========================================
 # 1. AYARLAR VE GEMINI AI KURULUMU
 # ==========================================
@@ -217,32 +234,49 @@ if menu == "Cümle Kurma":
 
 # --- MOD 2: KELİME BİLMECE ---
 elif menu == "Kelime Bilmecesi":
-    st.header("🧩 Kelimeyi Tahmin Et")
+    st.header("🧩 Kelime Bilmecesi")
     
-    if st.button("Yeni Kelime", type="primary"):
-        obj = random.choice(KELIME_REHBERI)
-        w = list(obj["w"])
-        random.shuffle(w)
-        st.session_state.kelime_sorusu = {
-            "w": obj["w"],
-            "karisik": "".join(w).upper(),
-            "note": obj["note"]
-        }
-        st.session_state.cevap_verildi = False
-        st.rerun()
-
-    if st.session_state.kelime_sorusu:
-        data = st.session_state.kelime_sorusu
-        st.subheader(f"Harfler: {data['karisik']}")
+    if st.button("Yeni Kelime Çek", type="primary"):
+        secilen = random.choice(KELIME_REHBERI)
+        kelime = secilen["w"]
         
-        ktahmin = st.text_input("Kelime nedir?").lower().strip()
+        # Harf karıştırma
+        w_list = list(kelime)
+        random.shuffle(w_list)
+        karisik_harfler = "".join(w_list).upper()
         
-        if st.button("Tahmin Et"):
-            if ktahmin == data["w"]:
-                st.success(f"🎉 DOĞRU! {data['w'].upper()}")
-                st.info(data["note"])
-                if not st.session_state.cevap_verildi:
-                    st.session_state.skor += 15
-                    st.session_state.cevap_verildi = True
+        # Boşluklu gösterme
+        bosluklu = ""
+        for char in kelime:
+            if random.random() > 0.4:
+                bosluklu += "_ "
             else:
-                st.error("❌ Yanlış.")
+                bosluklu += char.upper() + " "
+                
+        st.session_state.kelime_sorusu = {
+            "w": kelime,
+            "karisik": karisik_harfler,
+            "bosluklu": bosluklu,
+            "note": secilen["note"]
+        }
+        st.session_state.kelime_cevap_verildi = False
+        st.rerun()
+        
+    if st.session_state.kelime_sorusu:
+        soru_data = st.session_state.kelime_sorusu
+        
+        st.subheader(f"Karışık Harfler: {soru_data['karisik']}")
+        st.write(f"İpucu: {soru_data['bosluklu']}")
+        
+        k_tahmin = st.text_input("Bu kelime nedir?").lower().strip()
+        
+        if st.button("Kelimeyi Kontrol Et"):
+            if k_tahmin == soru_data["w"]:
+                st.success(f"🎉 BİNGO! Doğru kelime: {soru_data['w'].upper()}")
+                st.info(soru_data["note"])
+                if not st.session_state.kelime_cevap_verildi:
+                    st.session_state.skor += 15
+                    st.session_state.kelime_cevap_verildi = True
+                    st.balloons()
+            else:
+                st.error("❌ Yanlış, tekrar dene!")
