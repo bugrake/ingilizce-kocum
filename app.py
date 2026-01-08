@@ -11,7 +11,7 @@ import google.generativeai as genai
 st.set_page_config(page_title="AI İngilizce Koçu", page_icon="🤖", layout="centered")
 
 # --- BURAYA KENDİ API KEY'İNİ YAPIŞTIR ---
-API_KEY = "AIzaSyAOgfFgb8i7NJPq7OuWKXNlKpyy0K4FIjc"  
+API_KEY = st.secrets["AIzaSyAOgfFgb8i7NJPq7OuWKXNlKpyy0K4FIjc"]  
 # -----------------------------------------
 
 try:
