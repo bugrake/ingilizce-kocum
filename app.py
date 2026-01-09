@@ -1,9 +1,9 @@
+import google.generativeai as genai
 import streamlit as st
 import random
 import string
 import difflib
 import time
-import google.generativeai as genai
 
 # --- SAYFA AYARLARI ---
 st.set_page_config(page_title="İngilizce Koçu", layout="centered")
@@ -27,15 +27,15 @@ if 'ipucu_sayisi' not in st.session_state:
 # ==========================================
 st.set_page_config(page_title="AI İngilizce Koçu", page_icon="🤖", layout="centered")
 
-# --- BURAYA KENDİ API KEY'İNİ YAPIŞTIR ---
-API_KEY = st.secrets["GEMINI_KEY"]  
-# -----------------------------------------
-
 try:
+    API_KEY = st.secrets["GEMINI_KEY"]
     genai.configure(api_key=API_KEY)
-    model = genai.GenerativeModel('gemini-1.5-flash')
+    
+    # En garantili model isimlendirmesi budur
+    model = genai.GenerativeModel('models/gemini-1.5-flash')
     ai_aktif = True
-except:
+except Exception as e:
+    st.error(f"Bağlantı Hatası: {e}")
     ai_aktif = False
 
 # Session State (Hafıza)
