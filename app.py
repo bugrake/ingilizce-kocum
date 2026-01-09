@@ -33,7 +33,7 @@ API_KEY = st.secrets["GEMINI_KEY"]
 
 try:
     genai.configure(api_key=API_KEY)
-    model = genai.GenerativeModel('gemini-pro')
+    model = genai.GenerativeModel('models/gemini-pro')
     ai_aktif = True
 except:
     ai_aktif = False
