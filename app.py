@@ -32,7 +32,8 @@ try:
     genai.configure(api_key=API_KEY)
     
     # En garantili model isimlendirmesi budur
-    model = genai.GenerativeModel('models/gemini-1.5-flash')
+    # Sadece modelin adını yazıyoruz, başına models/ koymuyoruz
+    model = genai.GenerativeModel('gemini-1.5-flash')
     ai_aktif = True
 except Exception as e:
     st.error(f"Bağlantı Hatası: {e}")
