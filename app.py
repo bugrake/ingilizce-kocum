@@ -1,9 +1,16 @@
 import streamlit as st
-import google.generativeai as genai
+from openai import OpenAI  # Gemini yerine OpenAI ekledik
 import random
 import string
 import difflib
 
+# OpenAI Bağlantısı
+try:
+    client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+    ai_aktif = True
+except Exception as e:
+    st.sidebar.error(f"Bağlantı Hatası: {e}")
+    ai_aktif = False
 # ==========================================
 # 1. AYARLAR VE HAFIZA BAŞLATMA
 # ==========================================
@@ -23,20 +30,7 @@ for key, value in keys.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
-# ==========================================
-# 2. GEMINI AI KURULUMU
-# ==========================================
-try:
-    # Secrets panelinden anahtarı alıyoruz
-    API_KEY = st.secrets["GEMINI_KEY"]
-    genai.configure(api_key=API_KEY)
-    
-    # En güncel ve stabil model tanımlaması
-    model = genai.GenerativeModel('gemini-1.5-flash')
-    ai_aktif = True
-except Exception as e:
-    st.sidebar.error(f"AI Bağlantı Hatası: {e}")
-    ai_aktif = False
+
 
 # ==========================================
 # 3. VERİTABANI
@@ -99,13 +93,17 @@ def hata_vurgula(tahmin, dogru):
 
 def ai_analiz(tahmin, dogru, tr):
     if not ai_aktif: return "⚠️ AI şu an aktif değil."
-    prompt = f"Sen öğretmensin. '{tr}' cümlesi için öğrenci '{tahmin}' dedi ama doğrusu '{dogru}'. Hatayı Türkçe ve kısa açıkla."
+    
+    prompt = f"Sen bir İngilizce öğretmenisin. '{tr}' cümlesi için öğrenci '{tahmin}' dedi ama doğrusu '{dogru}'. Hatayı Türkçe ve kısa açıkla."
+    
     try:
-        response = model.generate_content(prompt)
-        return response.text
-    except:
-        return "🤖 AI şu an bir bağlantı sorunu yaşıyor."
-
+        response = client.chat.completions.create(
+            model="gpt-3.5-turbo", # Veya "gpt-4o-mini"
+            messages=[{"role": "user", "content": prompt}]
+        )
+        return response.choices[0].message.content
+    except Exception as e:
+        return f"🤖 AI Hatası: {e}"
 # ==========================================
 # 5. ARAYÜZ
 # ==========================================
