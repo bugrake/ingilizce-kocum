@@ -3,6 +3,28 @@ import google.generativeai as genai
 import random
 import string
 import difflib
+import json
+import os
+import bcrypt
+import pandas as pd
+
+# ==========================================
+# 1. GÜVENLİK AYARLARI (BURAYI KENDİNE GÖRE DÜZENLE)
+# ==========================================
+VALID_PASSKEYS = ["KRALINYO2024", "AI_PRO_99", "VIP_ACCESS"] # Geçiş anahtarların
+IP_WHITELIST = ["127.0.0.1", "123.456.78.90"] # Buraya erişim izni verdiğin IP'leri yaz
+
+# Kullanıcının gerçek IP adresini alma fonksiyonu
+def get_remote_ip():
+    try:
+        # Streamlit'in bazı sürümlerinde header üzerinden IP alınabilir
+        from streamlit.web.server.websocket_headers import _get_websocket_headers
+        headers = _get_websocket_headers()
+        if headers:
+            return headers.get("X-Forwarded-For", "Bilinmiyor").split(",")[0]
+    except:
+        return "Bilinmiyor"
+    return "Bilinmiyor"
 
 # ==========================================
 # 1. AYARLAR VE HAFIZA
@@ -42,6 +64,35 @@ except Exception as e:
     st.sidebar.error(f"Kritik Bağlantı Hatası: {str(e)}")
     ai_aktif = False
 
+# ==========================================
+# 4. VIP GİRİŞ EKRANI (IP + PASSKEY)
+# ==========================================
+def check_access():
+    user_ip = get_remote_ip()
+    
+    st.title("🔒 VIP Erişim Merkezi")
+    st.write(f"Sistem IP Adresiniz: `{user_ip}`")
+
+    # IP Kontrolü (İstersen burayı pasif bırakabilirsin)
+    if IP_WHITELIST and user_ip not in IP_WHITELIST and user_ip != "Bilinmiyor":
+        st.error("❌ Bu IP adresi whitelist'te bulunmuyor. Erişim engellendi.")
+        st.stop()
+
+    # Passkey Kontrolü
+    passkey = st.text_input("Geçiş Anahtarınızı Girin:", type="password")
+    
+    if st.button("Sisteme Giriş Yap"):
+        if passkey in VALID_PASSKEYS:
+            st.session_state.auth = True
+            st.success("Erişim onaylandı! Yükleniyor...")
+            st.rerun()
+        else:
+            st.error("❌ Geçersiz anahtar!")
+
+if not st.session_state.auth:
+    check_access()
+    st.stop()
+    
 # ==========================================
 # 3. AI ÜRETİM VE KONTROL MODÜLLERİ
 # ==========================================
