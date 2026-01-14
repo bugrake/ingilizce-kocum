@@ -28,14 +28,13 @@ def get_remote_ip():
 # ==========================================
 # 1. AYARLAR VE HAFIZA
 # ==========================================
-st.set_page_config(page_title="Master AI İngilizce Koçu", layout="wide")
+st.set_page_config(page_title="VIP AI İngilizce Koçu", layout="wide")
 
-# Hafıza değişkenlerini başlat
-for key, val in {
-    'skor': 0, 'soru': None, 'cevap_verildi': False, 
-    'kelime_bilmece': None
-}.items():
-    if key not in st.session_state: st.session_state[key] = val
+# Değişkenleri güvenli bir şekilde başlatıyoruz
+if 'auth' not in st.session_state:
+    st.session_state['auth'] = False
+if 'soru' not in st.session_state:
+    st.session_state['soru'] = None
 
 # ==========================================
 # 2. AI BAĞLANTISI (DOKUNULMADI - EN SAĞLAM HALİ)
