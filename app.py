@@ -11,7 +11,7 @@ import pandas as pd
 # 1. GÜVENLİK AYARLARI (BURAYI KENDİNE GÖRE DÜZENLE)
 # ==========================================
 VALID_PASSKEYS = ["KRALINYO2024", "AI_PRO_99", "VIP_ACCESS", "anan"] # Geçiş anahtarların
-IP_WHITELIST = ["127.0.0.1", "123.456.78.90", "192.168.0.102", "192.168.15.213"] # Buraya erişim izni verdiğin IP'leri yaz
+IP_WHITELIST = ["127.0.0.1", "123.456.78.90", "192.168.0.102", "192.168.15.213", "192.168.0.48"] # Buraya erişim izni verdiğin IP'leri yaz
 
 # Kullanıcının gerçek IP adresini alma fonksiyonu
 def get_remote_ip():
@@ -30,11 +30,11 @@ def get_remote_ip():
 # ==========================================
 st.set_page_config(page_title="VIP AI İngilizce Koçu", layout="wide")
 
-# Değişkenleri güvenli bir şekilde başlatıyoruz
-if 'auth' not in st.session_state:
-    st.session_state['auth'] = False
-if 'soru' not in st.session_state:
-    st.session_state['soru'] = None
+# Hatanın çözümü: Tüm anahtarları başlangıçta kontrol et ve tanımla
+if 'auth' not in st.session_state: st.session_state['auth'] = False
+if 'skor' not in st.session_state: st.session_state['skor'] = 0
+if 'soru' not in st.session_state: st.session_state['soru'] = None
+if 'cevap_verildi' not in st.session_state: st.session_state['cevap_verildi'] = False
 
 # ==========================================
 # 2. AI BAĞLANTISI (DOKUNULMADI - EN SAĞLAM HALİ)
