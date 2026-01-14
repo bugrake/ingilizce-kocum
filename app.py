@@ -23,11 +23,14 @@ if 'ipucu_sayisi' not in st.session_state: st.session_state.ipucu_sayisi = 0
 try:
     if "GEMINI_KEY" in st.secrets:
         genai.configure(api_key=st.secrets["GEMINI_KEY"])
-        # En güncel model ismi. 404 hatasını önlemek için models/ ön eki kaldırıldı.
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        
+        # HATA ÇÖZÜMÜ: 'gemini-1.5-flash' yerine en güvenli liman olan 'gemini-pro'ya geçtik.
+        # Bu model v1beta dahil her sürümde çalışır.
+        model = genai.GenerativeModel('gemini-pro')
+        
         ai_aktif = True
     else:
-        st.error("❌ HATA: Streamlit Secrets kısmında 'GEMINI_KEY' bulunamadı.")
+        st.error("❌ HATA: Secrets kısmında 'GEMINI_KEY' yok.")
         ai_aktif = False
 except Exception as e:
     st.error(f"❌ BAĞLANTI HATASI: {type(e).__name__} - {str(e)}")
