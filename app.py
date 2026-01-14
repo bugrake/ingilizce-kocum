@@ -12,7 +12,7 @@ import pandas as pd
 # 1. GÜVENLİK AYARLARI (BURAYI KENDİNE GÖRE DÜZENLE)
 # ==========================================
 VALID_PASSKEYS = ["KRALINYO2024", "AI_PRO_99", "VIP_ACCESS"] # Geçiş anahtarların
-IP_WHITELIST = ["127.0.0.1", "123.456.78.90"] # Buraya erişim izni verdiğin IP'leri yaz
+IP_WHITELIST = ["127.0.0.1", "123.456.78.90", "192.168.0.102"] # Buraya erişim izni verdiğin IP'leri yaz
 
 # Kullanıcının gerçek IP adresini alma fonksiyonu
 def get_remote_ip():
