@@ -46,6 +46,25 @@ except Exception as e:
 # 3. AI ÜRETİM VE KONTROL MODÜLLERİ
 # ==========================================
 
+def ai_kontrol(tahmin, dogru, tr):
+    # AI'ya daha katı olması için yeni talimatlar ekliyoruz
+    prompt = f"""
+    Sen ciddi bir İngilizce öğretmenisin ama aynı zamanda da sempatik birisinki karşındaki öğrenci seni sevsin bir şeyler öğrenmek isteyebilsin.
+    Türkçe cümle: '{tr}'
+    Beklenen tam İngilizce karşılık: '{dogru}'
+    Öğrencinin cevabı: '{tahmin}'
+
+    TALİMATLAR:
+    1. Eğer cevap beklenen cümlenin anlamını tam karşılamıyorsa veya alakasızsa (küfür, saçma kelimeler vb.) asla 'OK' yazma.
+    2. Sadece gramer ve anlam olarak %90 ve üzeri doğruysa 'OK' yaz.
+    3. Yanlışsa, öğrenciye hatasını Türkçe olarak net bir şekilde söyle.
+    """
+    try:
+        res = model.generate_content(prompt)
+        return res.text.strip()
+    except:
+        return "Hata oluştu, tekrar dene."
+        
 def ai_cumle_uret(seviye):
     """Veri tabanı yerine AI ile dinamik cümle üretir"""
     prompt = f"Bana {seviye} seviyesinde orta uzunlukta bir İngilizce cümle ve Türkçesini ver. Format sadece şu olsun: 'ingilizce|türkçe'. Örn: 'I am going home|Eve gidiyorum'."
